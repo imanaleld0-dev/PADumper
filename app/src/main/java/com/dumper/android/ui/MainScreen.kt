@@ -27,6 +27,7 @@ import com.dumper.android.ui.console.ConsoleViewModel
 import com.dumper.android.ui.memory.MemoryScreen
 import com.dumper.android.ui.memory.MemoryViewModel
 import com.dumper.android.ui.navigation.BottomNavBar
+import com.dumper.android.ui.wait.WaitForProcessScreen
 import com.dumper.android.utils.openGithubPage
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -62,6 +63,7 @@ fun MainScreen(memory: MemoryViewModel = viewModel(), console: ConsoleViewModel 
         Surface(modifier = Modifier.padding(it)) {
             NavHost(navController = navController, startDestination = "memory") {
                 composable("memory") { MemoryScreen(navController, memory) }
+                composable("wait_for_process") { WaitForProcessScreen(navController, memory) }
                 composable("console") { ConsoleScreen(navController, console) }
             }
         }
