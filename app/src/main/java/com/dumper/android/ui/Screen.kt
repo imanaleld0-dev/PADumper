@@ -5,7 +5,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.FeaturedPlayList
 import androidx.compose.material.icons.automirrored.outlined.FeaturedPlayList
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.HourglassTop
 import androidx.compose.material.icons.outlined.Home
+import androidx.compose.material.icons.outlined.HourglassTop
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.dumper.android.R
 
@@ -17,7 +19,17 @@ sealed class Screen(
 ) {
     data object Memory : Screen("memory", R.string.home, Icons.Filled.Home, Icons.Outlined.Home)
 
-    data object Console : Screen("console", R.string.log,
-        Icons.AutoMirrored.Filled.FeaturedPlayList, Icons.AutoMirrored.Outlined.FeaturedPlayList
+    data object WaitForProcess : Screen(
+        "wait_for_process",
+        R.string.wait_for_process,
+        Icons.Filled.HourglassTop,
+        Icons.Outlined.HourglassTop
+    )
+
+    data object Console : Screen(
+        "console",
+        R.string.log,
+        Icons.AutoMirrored.Filled.FeaturedPlayList,
+        Icons.AutoMirrored.Outlined.FeaturedPlayList
     )
 }
