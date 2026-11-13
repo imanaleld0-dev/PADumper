@@ -4,6 +4,8 @@ import android.Manifest
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -36,8 +38,11 @@ class MainActivity : ComponentActivity() {
     val memory: MemoryViewModel by viewModels()
     val console: ConsoleViewModel by viewModels()
 
-    // FIXME: Use proper way to check storage permission
     private var isStoragePermissionGranted = true
+
+    private val waitForProcessHandler = Handler(Looper.getMainLooper())
+    private var waitForProcessRunnable: Runnable? = null
+    private var isWaitForProcessActive = false
 
     private val permissionRequest = ActivityPermissionRequest.Builder(this)
         .withPermissions(
@@ -122,6 +127,56 @@ class MainActivity : ComponentActivity() {
     fun sendRequestAllProcess() {
         val processList = dumperConnection?.getListProcess() ?: Process.getAllProcess(this, false)
         memory.showProcess(this, processList)
+    }
+
+    fun startWaitForProcess(
+        processName: String,
+        dumpFile: String,
+        isDumpGlobalMetadata: Boolean,
+        autoFix: Boolean
+    ) {
+        if (processName.isBlank()) {
+            Toast.makeText(this, "Process name is empty", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        isWaitForProcessActive = true
+        val target = processName.trim()
+
+        waitForProcessRunnable = object : Runnable {
+            override fun run() {
+                if (!isWaitForProcessActive) return
+
+                val runningProcesses = dumperConnection?.getListProcess()
+                    ?: Process.getAllProcess(this@MainActivity, false)
+
+                val found = runningProcesses.any { it.processName == target }
+
+                if (found) {
+                    memory.waitingStatus.value = "Detected: $target"
+                    sendRequestDump(
+                        process = target,
+                        dumpFile = dumpFile,
+                        isDumpGlobalMetadata = isDumpGlobalMetadata,
+                        autoFix = autoFix
+                    )
+                    stopWaitForProcess()
+                    return
+                }
+
+                memory.waitingStatus.value = "Waiting for $target..."
+                waitForProcessHandler.postDelayed(this, 1000L)
+            }
+        }
+
+        waitForProcessHandler.post(waitForProcessRunnable!!)
+    }
+
+    fun stopWaitForProcess() {
+        isWaitForProcessActive = false
+        waitForProcessRunnable?.let {
+            waitForProcessHandler.removeCallbacks(it)
+        }
     }
 
     fun sendRequestDump(
