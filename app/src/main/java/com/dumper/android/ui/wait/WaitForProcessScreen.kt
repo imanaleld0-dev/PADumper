@@ -2,10 +2,12 @@ package com.dumper.android.ui.wait
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -57,9 +59,37 @@ fun WaitForProcessScreen(navController: NavController, viewModel: MemoryViewMode
             Text("Stop")
         }
 
-        Text(
-            text = status,
-            modifier = Modifier.fillMaxWidth()
-        )
+        Text(text = status, modifier = Modifier.fillMaxWidth())
+
+        Card(modifier = Modifier.fillMaxWidth()) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                Text(text = "Shizuku")
+                Text(text = "Status: not connected")
+                Text(text = "UI preview only — Shizuku actions are not connected yet.")
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Button(
+                        onClick = { /* UI only: integration not implemented */ },
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Text("Check status")
+                    }
+                    Button(
+                        onClick = { /* UI only: integration not implemented */ },
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Text("Request access")
+                    }
+                }
+            }
+        }
     }
 }
