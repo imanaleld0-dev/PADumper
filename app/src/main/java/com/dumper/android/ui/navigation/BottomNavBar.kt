@@ -13,11 +13,12 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.dumper.android.ui.Screen
 
-
 @Composable
 fun BottomNavBar(navController: NavController) {
+    // Keep this order so the wait tab appears between Home and Log.
     val items = listOf(
         Screen.Memory,
+        Screen.WaitForProcess,
         Screen.Console,
     )
 
