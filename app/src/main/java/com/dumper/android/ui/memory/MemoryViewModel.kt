@@ -14,6 +14,11 @@ class MemoryViewModel : ViewModel() {
     val libName = MutableStateFlow("libil2cpp.so")
     val isFixELF = MutableStateFlow(false)
     val isDumpMetadata = MutableStateFlow(false)
+
+    val waitProcessName = MutableStateFlow("")
+    val isWaitingForProcess = MutableStateFlow(false)
+    val waitingStatus = MutableStateFlow("Idle")
+
     val isDialogProcessList = MutableStateFlow(false)
     val processList = MutableLiveData<Array<ProcessData>>()
 
@@ -36,6 +41,29 @@ class MemoryViewModel : ViewModel() {
         )
     }
 
+    fun startWaitingForProcess(context: Context) {
+        val target = waitProcessName.value.trim()
+        if (target.isEmpty()) {
+            Toast.makeText(context, "Process name is empty", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        waitingStatus.value = "Waiting for $target..."
+        isWaitingForProcess.value = true
+        context.asMainActivity()?.startWaitForProcess(
+            processName = target,
+            dumpFile = libName.value,
+            isDumpGlobalMetadata = isDumpMetadata.value,
+            autoFix = isFixELF.value
+        )
+    }
+
+    fun stopWaitingForProcess(context: Context) {
+        waitingStatus.value = "Stopped"
+        isWaitingForProcess.value = false
+        context.asMainActivity()?.stopWaitForProcess()
+    }
+
     fun closeProcessListDialog() {
         isDialogProcessList.value = false
     }
@@ -46,6 +74,10 @@ class MemoryViewModel : ViewModel() {
 
     fun changePackageName(pkg: String) {
         packageName.value = pkg
+    }
+
+    fun changeWaitProcessName(pkg: String) {
+        waitProcessName.value = pkg
     }
 
     fun changeLibName(lib: String) {
