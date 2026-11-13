@@ -28,6 +28,15 @@
             </intent-filter>
         </activity>
         <activity android:name=".core.MainActivity" />
+
+        <!-- Shizuku supplies the Binder used for connection and consent status only. -->
+        <provider
+            android:name="rikka.shizuku.ShizukuProvider"
+            android:authorities="${applicationId}.shizuku"
+            android:multiprocess="false"
+            android:enabled="true"
+            android:exported="true"
+            android:permission="android.permission.INTERACT_ACROSS_USERS_FULL" />
     </application>
 
 </manifest>
